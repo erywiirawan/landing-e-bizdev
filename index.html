@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>e-BizDev — Portal Data & Dashboard</title>
+  <title>e-BizDev Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,10 +21,12 @@
       --text-muted: #878a99;
       --heading: #495057;
       --border: #e9ebec;
-      --shadow: 0 1px 2px rgba(56,65,74,.15);
-      --shadow-lg: 0 5px 10px rgba(30,32,37,.12);
-      --radius: 0.25rem;
-      --radius-lg: 0.5rem;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.06);
+      --shadow: 0 4px 6px rgba(0,0,0,.04), 0 2px 4px rgba(0,0,0,.04);
+      --shadow-md: 0 10px 15px rgba(0,0,0,.06), 0 4px 6px rgba(0,0,0,.05);
+      --shadow-lg: 0 20px 25px rgba(0,0,0,.08), 0 8px 10px rgba(0,0,0,.04);
+      --radius: 0.5rem;
+      --radius-lg: 0.75rem;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -117,25 +119,6 @@
       margin: 0 auto 2rem;
       font-weight: 300;
     }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 50rem;
-      padding: 0.35rem 1rem;
-      font-size: 0.75rem;
-      font-weight: 500;
-      margin-bottom: 1.5rem;
-    }
-    .hero-badge .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--success);
-      display: inline-block;
-    }
 
     /* ── Section ── */
     .section {
@@ -145,22 +128,28 @@
     }
     .section-header {
       margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
     }
     .section-header h2 {
       font-size: 1.25rem;
       font-weight: 600;
       color: var(--heading);
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.35rem;
+      padding-left: 0.875rem;
+      border-left: 3px solid var(--primary);
+      line-height: 1.3;
     }
     .section-header p {
       color: var(--text-muted);
       font-size: 0.8125rem;
+      padding-left: calc(0.875rem + 3px);
     }
 
     /* ── Dashboard Grid ── */
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 1.25rem;
     }
     .dashboard-card {
@@ -170,79 +159,79 @@
       padding: 1.5rem;
       text-decoration: none;
       color: var(--text);
-      transition: all 0.2s;
-      border: 1px solid transparent;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--border);
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      align-items: flex-start;
+      gap: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .dashboard-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: inherit;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
     .dashboard-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px) scale(1.015);
       border-color: var(--primary);
     }
+    .dashboard-card:hover::after {
+      opacity: 1;
+    }
+    .dashboard-card:hover .card-arrow {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
     .card-icon {
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       border-radius: var(--radius);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
+      flex-shrink: 0;
     }
     .card-icon.sales { background: #e1ebfd; color: var(--accent); }
-    .card-icon.stock { background: #daf4f0; color: var(--success); }
     .card-icon.market { background: #fef4e4; color: var(--warning); }
-    .card-icon.po { background: #e2e5ed; color: var(--primary); }
+    .card-icon.todo { background: #e6f5f2; color: var(--success); }
 
+    .card-body {
+      flex: 1;
+      min-width: 0;
+    }
     .card-body h3 {
-      font-size: 1rem;
+      font-size: 0.9375rem;
       font-weight: 600;
       color: var(--heading);
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.35rem;
+      line-height: 1.3;
     }
     .card-body p {
       font-size: 0.75rem;
       color: var(--text-muted);
-      line-height: 1.5;
+      line-height: 1.6;
+      margin: 0;
     }
-    .card-tag {
-      display: inline-block;
-      font-size: 0.6875rem;
-      font-weight: 500;
-      padding: 0.25rem 0.6rem;
-      border-radius: 50rem;
-      align-self: flex-start;
+    .card-arrow {
+      position: absolute;
+      right: 1.25rem;
+      bottom: 1.25rem;
+      width: 20px;
+      height: 20px;
+      color: var(--primary);
+      opacity: 0;
+      transform: translate(-4px, 4px);
+      transition: all 0.3s ease;
     }
-    .card-tag.live { background: #daf4f0; color: #099885; }
-    .card-tag.internal { background: #e2e5ed; color: #364574; }
-
-    /* ── Data Source Section ── */
-    .source-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-    .source-item {
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      padding: 1rem 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      box-shadow: var(--shadow);
-    }
-    .source-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .source-dot.gsheet { background: #0ab39c; }
-    .source-dot.api { background: #3577f1; }
-    .source-dot.db { background: #405189; }
-    .source-info strong { font-size: 0.8125rem; color: var(--heading); display: block; }
-    .source-info span { font-size: 0.6875rem; color: var(--text-muted); }
 
     /* ── Footer ── */
     .footer {
@@ -272,114 +261,83 @@
         <span class="brand-icon">E</span>
         e-BizDev
       </a>
-      <ul class="navbar-nav">
-        <li><a href="#dashboard">Dashboard</a></li>
-        <li><a href="#sumber">Sumber Data</a></li>
-      </ul>
+
     </div>
   </nav>
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-badge">
-      <span class="dot"></span> Semua data real-time
-    </div>
-    <h1>Portal Data Bisnis & Dashboard</h1>
-    <p>Akses terpusat untuk dashboard penjualan, stok, market share, dan tools operasional — diperbarui otomatis.</p>
+    <h1>e-BizDev Dashboard</h1>
+    <p>Sales performance, market intelligence, dan task tracking. Satu portal, semua data.</p>
   </section>
 
   <!-- Dashboard Cards -->
   <section class="section" id="dashboard">
     <div class="section-header">
-      <h2>📊 Dashboard & Tools</h2>
-      <p>Klik untuk membuka dashboard yang dibutuhkan</p>
+      <h2>Dashboards</h2>
+      <p>Pilih dashboard untuk melihat detail.</p>
     </div>
     <div class="dashboard-grid">
 
       <!-- Penjualan -->
       <a href="https://sna-dashboard-rouge.vercel.app" class="dashboard-card" target="_blank" rel="noopener">
-        <div class="card-icon sales">📊</div>
+        <div class="card-icon sales">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18"/>
+            <path d="M7 16l4-8 4 4 4-6"/>
+          </svg>
+        </div>
         <div class="card-body">
-          <h3>Dashboard Penjualan</h3>
+          <h3>Sales Dashboard - SNA</h3>
           <p>Total penjualan, tren bulanan, perbandingan cabang & grup produk. Ringkasan performa sales.</p>
         </div>
-        <span class="card-tag live">● Live</span>
-      </a>
-
-      <!-- Stok -->
-      <a href="https://sc-dashboard-sna.vercel.app" class="dashboard-card" target="_blank" rel="noopener">
-        <div class="card-icon stock">📦</div>
-        <div class="card-body">
-          <h3>Dashboard Stok</h3>
-          <p>Nilai stok, stok aktif per grup, monitoring coverage & inventory. Update berkala dari SIIS.</p>
-        </div>
-        <span class="card-tag live">● Live</span>
+        <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="7" y1="17" x2="17" y2="7"/>
+          <polyline points="7 7 17 7 17 17"/>
+        </svg>
       </a>
 
       <!-- Market Share -->
       <a href="https://market-share-vercel-nine.vercel.app" class="dashboard-card" target="_blank" rel="noopener">
-        <div class="card-icon market">📈</div>
+        <div class="card-icon market">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
         <div class="card-body">
-          <h3>Market Share Semen</h3>
+          <h3>Market Share Cement - Indonesia</h3>
           <p>Pangsa pasar semen Indonesia per region, heatmap, tren brand. Data kompetitor & industri.</p>
         </div>
-        <span class="card-tag live">● Live</span>
+        <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="7" y1="17" x2="17" y2="7"/>
+          <polyline points="7 7 17 7 17 17"/>
+        </svg>
       </a>
 
-      <!-- PO Generator -->
-      <a href="https://po-generator-six.vercel.app" class="dashboard-card" target="_blank" rel="noopener">
-        <div class="card-icon po">📋</div>
+      <!-- Todo List -->
+      <a href="https://todo-list-eb.vercel.app" class="dashboard-card" target="_blank" rel="noopener">
+        <div class="card-icon todo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 11 12 14 22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+        </div>
         <div class="card-body">
-          <h3>PO Generator</h3>
-          <p>Generate surat pemesanan (PO) otomatis. Pilih supplier, item, langsung export PDF.</p>
+          <h3>To Do List</h3>
+          <p>Kelola tugas harian — tambah, atur prioritas, selesaikan. Simple dan ringan.</p>
         </div>
-        <span class="card-tag internal">Internal</span>
+        <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="7" y1="17" x2="17" y2="7"/>
+          <polyline points="7 7 17 7 17 17"/>
+        </svg>
       </a>
 
-    </div>
-  </section>
-
-  <!-- Data Sources -->
-  <section class="section" id="sumber">
-    <div class="section-header">
-      <h2>🔗 Sumber Data</h2>
-      <p>Dashboard dibangun dari data yang diperbarui secara berkala</p>
-    </div>
-    <div class="source-grid">
-      <div class="source-item">
-        <div class="source-dot gsheet"></div>
-        <div class="source-info">
-          <strong>Google Sheets</strong>
-          <span>Penjualan, Stok, PO</span>
-        </div>
-      </div>
-      <div class="source-item">
-        <div class="source-dot api"></div>
-        <div class="source-info">
-          <strong>SIIS API</strong>
-          <span>Data inventory & transaksi</span>
-        </div>
-      </div>
-      <div class="source-item">
-        <div class="source-dot db"></div>
-        <div class="source-info">
-          <strong>ASI Data</strong>
-          <span>Market share semen Indonesia</span>
-        </div>
-      </div>
-      <div class="source-item">
-        <div class="source-dot api"></div>
-        <div class="source-info">
-          <strong>Cloudflared Tunnel</strong>
-          <span>Koneksi VPS ↔ dashboard</span>
-        </div>
-      </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="footer">
-    e-BizDev Portal &copy; 2026 &mdash; Dibangun dengan <span style="color:var(--danger)">♥</span> oleh Ery Wirawan
+    e-BizDev © 2026 · Ery Wirawan
   </footer>
 
 </body>
