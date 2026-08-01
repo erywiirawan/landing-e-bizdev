@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>e-BizDev Dashboard</title>
+  <meta name="description" content="Portal internal e-BizDev — tools operasional dan analytics dashboard.">
+  <script>
+    // Prevent theme flash: apply before first paint
+    (function(){
+      try {
+        var t = localStorage.getItem('ebz-theme');
+        if (!t) t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+      } catch(e){}
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,6 +26,8 @@
       --success: #0ab39c;
       --warning: #f7b84b;
       --danger: #f06548;
+      --teal: #14b8a6;
+      --amber: #f59e0b;
       --body-bg: #f3f3f9;
       --card-bg: #fff;
       --text: #212529;
@@ -24,9 +37,26 @@
       --shadow-sm: 0 1px 2px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.06);
       --shadow: 0 4px 6px rgba(0,0,0,.04), 0 2px 4px rgba(0,0,0,.04);
       --shadow-md: 0 10px 15px rgba(0,0,0,.06), 0 4px 6px rgba(0,0,0,.05);
-      --shadow-lg: 0 20px 25px rgba(0,0,0,.08), 0 8px 10px rgba(0,0,0,.04);
       --radius: 0.5rem;
       --radius-lg: 0.75rem;
+    }
+
+    [data-theme="dark"] {
+      --primary: #8b9bd8;
+      --primary-light: #2a3352;
+      --accent: #6ea8fe;
+      --success: #2dd4bf;
+      --warning: #fbbf24;
+      --teal: #2dd4bf;
+      --body-bg: #14181f;
+      --card-bg: #1c2128;
+      --text: #e3e8ef;
+      --text-muted: #8b95a3;
+      --heading: #f0f3f7;
+      --border: #2c333d;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.3), 0 1px 3px rgba(0,0,0,.4);
+      --shadow: 0 4px 6px rgba(0,0,0,.3), 0 2px 4px rgba(0,0,0,.3);
+      --shadow-md: 0 10px 15px rgba(0,0,0,.4), 0 4px 6px rgba(0,0,0,.3);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,6 +68,7 @@
       line-height: 1.5;
       color: var(--text);
       background: var(--body-bg);
+      transition: background .25s ease, color .25s ease;
     }
 
     /* ── Navbar ── */
@@ -70,7 +101,7 @@
     .navbar-brand .brand-icon {
       width: 40px;
       height: 40px;
-      background: var(--primary);
+      background: #405189;
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -79,44 +110,51 @@
       font-size: 1.1rem;
       font-weight: 700;
     }
-    .navbar-nav {
+
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      list-style: none;
+      justify-content: center;
+      transition: all .2s ease;
     }
-    .navbar-nav a {
-      color: var(--text);
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius);
-      font-weight: 500;
-      font-size: 0.875rem;
-      transition: all 0.15s;
-    }
-    .navbar-nav a:hover {
+    .theme-toggle:hover {
       background: var(--primary-light);
       color: var(--primary);
+      border-color: var(--primary);
     }
+    .theme-toggle svg { width: 18px; height: 18px; }
+    [data-theme="dark"] .icon-sun { display: none; }
+    :not([data-theme="dark"]) .icon-moon { display: none; }
 
     /* ── Hero ── */
     .hero {
       background: linear-gradient(135deg, var(--primary) 0%, #2d3a6e 100%);
-      padding: 4rem 1.5rem;
+      padding: 3.5rem 1.5rem;
       text-align: center;
       color: #fff;
     }
+    [data-theme="dark"] .hero {
+      background: linear-gradient(135deg, #2a3352 0%, #161a26 100%);
+    }
     .hero h1 {
-      font-size: 2rem;
+      font-size: 1.875rem;
       font-weight: 600;
       line-height: 1.3;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
     }
     .hero p {
       font-size: 0.9375rem;
       opacity: 0.85;
       max-width: 600px;
-      margin: 0 auto 2rem;
+      margin: 0 auto;
       font-weight: 300;
     }
 
@@ -124,22 +162,24 @@
     .section {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 3rem 1.5rem;
+      padding: 2.5rem 1.5rem 0.5rem;
     }
+    .section:last-of-type { padding-bottom: 3rem; }
     .section-header {
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
       border-bottom: 1px solid var(--border);
     }
     .section-header h2 {
       font-size: 1.25rem;
       font-weight: 600;
       color: var(--heading);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.3rem;
       padding-left: 0.875rem;
       border-left: 3px solid var(--primary);
       line-height: 1.3;
     }
+    [data-theme="dark"] .section-header h2 { border-left-color: #6ea8fe; }
     .section-header p {
       color: var(--text-muted);
       font-size: 0.8125rem;
@@ -159,33 +199,17 @@
       padding: 1.5rem;
       text-decoration: none;
       color: var(--text);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
       border: 1px solid var(--border);
       display: flex;
       align-items: flex-start;
       gap: 1.25rem;
       position: relative;
-      overflow: hidden;
-    }
-    .dashboard-card::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      border-radius: inherit;
-      box-shadow: var(--shadow-md);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
     }
     .dashboard-card:hover {
-      transform: translateY(-4px) scale(1.015);
+      transform: translateY(-4px);
       border-color: var(--primary);
-    }
-    .dashboard-card:hover::after {
-      opacity: 1;
+      box-shadow: var(--shadow-md);
     }
     .dashboard-card:hover .card-arrow {
       opacity: 1;
@@ -200,14 +224,17 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .card-icon.sales { background: #e1ebfd; color: var(--accent); }
+    .card-icon.task { background: #e6f5f2; color: var(--success); }
+    .card-icon.ship { background: #e0f2f1; color: var(--teal); }
     .card-icon.market { background: #fef4e4; color: var(--warning); }
-    .card-icon.todo { background: #e6f5f2; color: var(--success); }
+    .card-icon.sales { background: #e1ebfd; color: var(--accent); }
 
-    .card-body {
-      flex: 1;
-      min-width: 0;
-    }
+    [data-theme="dark"] .card-icon.task { background: rgba(45,212,191,.14); }
+    [data-theme="dark"] .card-icon.ship { background: rgba(45,212,191,.14); }
+    [data-theme="dark"] .card-icon.market { background: rgba(251,191,36,.14); }
+    [data-theme="dark"] .card-icon.sales { background: rgba(110,168,254,.14); }
+
+    .card-body { flex: 1; min-width: 0; }
     .card-body h3 {
       font-size: 0.9375rem;
       font-weight: 600;
@@ -230,7 +257,7 @@
       color: var(--primary);
       opacity: 0;
       transform: translate(-4px, 4px);
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
     }
 
     /* ── Footer ── */
@@ -246,9 +273,9 @@
     /* ── Responsive ── */
     @media (max-width: 600px) {
       .navbar-inner { padding: 0 1rem; }
-      .hero { padding: 3rem 1rem; }
+      .hero { padding: 2.5rem 1rem; }
       .hero h1 { font-size: 1.5rem; }
-      .section { padding: 2rem 1rem; }
+      .section { padding: 2rem 1rem 0.5rem; }
     }
   </style>
 </head>
@@ -261,41 +288,78 @@
         <span class="brand-icon">E</span>
         e-BizDev
       </a>
-
+      <button class="theme-toggle" id="themeToggle" aria-label="Ganti tema" title="Ganti tema">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+      </button>
     </div>
   </nav>
 
   <!-- Hero -->
   <section class="hero">
     <h1>e-BizDev Dashboard</h1>
-    <p>Sales performance, market intelligence, dan task tracking. Satu portal, semua data.</p>
+    <p>Portal internal — tools operasional dan analytics dashboard.</p>
   </section>
 
-  <!-- Dashboard Cards -->
-  <section class="section" id="dashboard">
+  <!-- ── Operasional ── -->
+  <section class="section" id="operasional">
     <div class="section-header">
-      <h2>Dashboards</h2>
-      <p>Pilih dashboard untuk melihat detail.</p>
+      <h2>Operasional</h2>
+      <p>Alat bantu eksekusi harian, perencanaan procurement, dan koordinasi tugas.</p>
     </div>
     <div class="dashboard-grid">
 
-      <!-- Penjualan -->
-      <a href="https://sna-dashboard.e-bizdev.my.id" class="dashboard-card" target="_blank" rel="noopener">
-        <div class="card-icon sales">
+      <!-- Task Management -->
+      <a href="https://task.e-bizdev.my.id" class="dashboard-card" target="_blank" rel="noopener">
+        <div class="card-icon task">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 3v18h18"/>
-            <path d="M7 16l4-8 4 4 4-6"/>
+            <polyline points="9 11 12 14 22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
           </svg>
         </div>
         <div class="card-body">
-          <h3>Sales Dashboard - SNA</h3>
-          <p>Total penjualan, tren bulanan, perbandingan cabang & grup produk. Ringkasan performa sales.</p>
+          <h3>Task Management</h3>
+          <p>Kelola tugas tim multi-user — tugaskan, lacak progres &amp; deadline, serah-terima berantai, notifikasi real-time.</p>
         </div>
         <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="7" y1="17" x2="17" y2="7"/>
-          <polyline points="7 7 17 7 17 17"/>
+          <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
         </svg>
       </a>
+
+      <!-- Cement Procurement Forecast -->
+      <a href="https://kapal.e-bizdev.my.id" class="dashboard-card" target="_blank" rel="noopener">
+        <div class="card-icon ship">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.5 0 2.5 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+            <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/>
+            <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/>
+            <path d="M12 5v5"/><path d="M9 8h6"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <h3>Cement Procurement Forecast</h3>
+          <p>Perencanaan pengadaan semen PT SAA — jadwal kapal, tonase &amp; jumlah DO, proyeksi kebutuhan dan realisasi.</p>
+        </div>
+        <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+        </svg>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── Analytics Dashboard ── -->
+  <section class="section" id="analytics">
+    <div class="section-header">
+      <h2>Analytics Dashboard</h2>
+      <p>Analisis performa penjualan dan pangsa pasar untuk pengambilan keputusan.</p>
+    </div>
+    <div class="dashboard-grid">
 
       <!-- Market Share -->
       <a href="https://market-share-vercel-nine.vercel.app" class="dashboard-card" target="_blank" rel="noopener">
@@ -305,30 +369,28 @@
           </svg>
         </div>
         <div class="card-body">
-          <h3>Market Share Cement - Indonesia</h3>
-          <p>Pangsa pasar semen Indonesia per region, heatmap, tren brand. Data kompetitor & industri.</p>
+          <h3>Market Share Cement Indonesia</h3>
+          <p>Pangsa pasar semen seluruh Indonesia per region — heatmap, tren brand, kompetitor &amp; data industri.</p>
         </div>
         <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="7" y1="17" x2="17" y2="7"/>
-          <polyline points="7 7 17 7 17 17"/>
+          <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
         </svg>
       </a>
 
-      <!-- Task Management -->
-      <a href="https://todo-list-eb.vercel.app" class="dashboard-card" target="_blank" rel="noopener">
-        <div class="card-icon todo">
+      <!-- Building Material Sales -->
+      <a href="https://sna-dashboard.e-bizdev.my.id" class="dashboard-card" target="_blank" rel="noopener">
+        <div class="card-icon sales">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 11 12 14 22 4"/>
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            <path d="M3 3v18h18"/>
+            <path d="M7 16l4-8 4 4 4-6"/>
           </svg>
         </div>
         <div class="card-body">
-          <h3>Task Management</h3>
-          <p>Kelola tugas tim — tugaskan, lacak progres, serah-terima berantai, dan notifikasi real-time.</p>
+          <h3>Building Material Sales Dashboard</h3>
+          <p>Data penjualan SNA — tren bulanan, perbandingan cabang &amp; grup produk, ringkasan performa sales.</p>
         </div>
         <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="7" y1="17" x2="17" y2="7"/>
-          <polyline points="7 7 17 7 17 17"/>
+          <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
         </svg>
       </a>
 
@@ -339,6 +401,32 @@
   <footer class="footer">
     e-BizDev © 2026 · Ery Wirawan
   </footer>
+
+  <script>
+    (function() {
+      var KEY = 'ebz-theme';
+      var btn = document.getElementById('themeToggle');
+
+      function apply(t) {
+        if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+        else document.documentElement.removeAttribute('data-theme');
+        try { localStorage.setItem(KEY, t); } catch(e) {}
+      }
+
+      // Init: localStorage → prefers-color-scheme → light
+      var saved = null;
+      try { saved = localStorage.getItem(KEY); } catch(e) {}
+      if (!saved) {
+        saved = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      }
+      apply(saved);
+
+      btn.addEventListener('click', function() {
+        var cur = document.documentElement.hasAttribute('data-theme') ? 'dark' : 'light';
+        apply(cur === 'dark' ? 'light' : 'dark');
+      });
+    })();
+  </script>
 
 </body>
 </html>
