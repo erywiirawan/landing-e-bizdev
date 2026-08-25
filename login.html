@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk · e-BizDev Portal</title>
+  <meta name="robots" content="noindex">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('ebz-theme');
+        if (!t) t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+      } catch(e){}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #405189;
+      --accent: #3577f1;
+      --body-bg: #f3f3f9;
+      --card-bg: #fff;
+      --text: #212529;
+      --text-muted: #878a99;
+      --heading: #495057;
+      --border: #e9ebec;
+      --danger: #f06548;
+      --input-bg: #fff;
+      --shadow-md: 0 10px 15px rgba(0,0,0,.06), 0 4px 6px rgba(0,0,0,.05);
+      --radius-lg: 0.75rem;
+    }
+    [data-theme="dark"] {
+      --primary: #8b9bd8;
+      --accent: #6ea8fe;
+      --body-bg: #14181f;
+      --card-bg: #1c2128;
+      --text: #e3e8ef;
+      --text-muted: #8b95a3;
+      --heading: #f0f3f7;
+      --border: #2c333d;
+      --danger: #ff7b66;
+      --input-bg: #232a33;
+      --shadow-md: 0 10px 15px rgba(0,0,0,.4), 0 4px 6px rgba(0,0,0,.3);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--body-bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .theme-btn {
+      position: fixed; top: 18px; right: 18px;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 50%; width: 40px; height: 40px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); transition: transform .15s ease;
+    }
+    .theme-btn:hover { transform: rotate(15deg); }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      width: 100%; max-width: 380px;
+      padding: 36px 32px;
+    }
+    .brand { text-align: center; margin-bottom: 28px; }
+    .brand-mark {
+      width: 52px; height: 52px; margin: 0 auto 14px;
+      background: var(--primary); color: #fff;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 20px; letter-spacing: .5px;
+    }
+    .brand h1 { font-size: 19px; font-weight: 600; color: var(--heading); }
+    .brand p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: var(--heading); margin-bottom: 6px; }
+    .field { margin-bottom: 16px; }
+    .input-wrap { position: relative; }
+    input[type="text"], input[type="password"] {
+      width: 100%; padding: 11px 42px 11px 13px;
+      font-family: inherit; font-size: 14px;
+      background: var(--input-bg); color: var(--text);
+      border: 1px solid var(--border); border-radius: 8px;
+      outline: none; transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(53,119,241,.12); }
+    .toggle-pass {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); padding: 4px; display: flex;
+    }
+    button.submit {
+      width: 100%; padding: 12px; margin-top: 6px;
+      background: var(--primary); color: #fff;
+      font-family: inherit; font-size: 14px; font-weight: 500;
+      border: none; border-radius: 8px; cursor: pointer;
+      transition: filter .15s ease;
+    }
+    button.submit:hover { filter: brightness(1.08); }
+    button.submit:active { filter: brightness(.95); }
+    .error-box {
+      display: none;
+      background: rgba(240,101,72,.1); color: var(--danger);
+      border: 1px solid rgba(240,101,72,.3);
+      border-radius: 8px; padding: 10px 13px;
+      font-size: 13px; margin-bottom: 16px;
+    }
+    .error-box.show { display: block; }
+    .foot { text-align: center; margin-top: 22px; font-size: 12px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <button class="theme-btn" id="themeBtn" title="Ganti tema" aria-label="Ganti tema">
+    <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <div class="card">
+    <div class="brand">
+      <div class="brand-mark">eB</div>
+      <h1>e-BizDev Portal</h1>
+      <p>Portal internal — masuk untuk melanjutkan</p>
+    </div>
+
+    <div class="error-box" id="errBox">Username atau password salah.</div>
+
+    <form method="POST" action="/login" autocomplete="on">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required autofocus autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <input type="password" id="password" name="password" required autocomplete="current-password">
+          <button type="button" class="toggle-pass" id="togglePass" aria-label="Tampilkan password">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="submit">Masuk</button>
+    </form>
+
+    <div class="foot">Sesi aktif 30 hari di browser ini</div>
+  </div>
+
+  <script>
+    // Pesan error kalau redirect dari login gagal
+    if (new URLSearchParams(location.search).get('error')) {
+      document.getElementById('errBox').classList.add('show');
+    }
+
+    // Toggle lihat password
+    document.getElementById('togglePass').addEventListener('click', function () {
+      var inp = document.getElementById('password');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+
+    // Tema
+    var btn = document.getElementById('themeBtn');
+    function syncIcon() {
+      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.getElementById('iconMoon').style.display = dark ? 'none' : 'block';
+      document.getElementById('iconSun').style.display = dark ? 'block' : 'none';
+    }
+    syncIcon();
+    btn.addEventListener('click', function () {
+      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      var next = dark ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('ebz-theme', next); } catch(e){}
+      syncIcon();
+    });
+  </script>
+</body>
+</html>
