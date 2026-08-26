@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Akun · e-BizDev Portal</title>
+  <meta name="robots" content="noindex">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('ebz-theme');
+        if (!t) t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+      } catch(e){}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #405189;
+      --accent: #3577f1;
+      --body-bg: #f3f3f9;
+      --card-bg: #fff;
+      --text: #212529;
+      --text-muted: #878a99;
+      --heading: #495057;
+      --border: #e9ebec;
+      --danger: #f06548;
+      --success: #0ab39c;
+    }
+    [data-theme="dark"] {
+      --primary: #8b9bd8;
+      --accent: #6ea8fe;
+      --body-bg: #14181f;
+      --card-bg: #1c2128;
+      --text: #e3e8ef;
+      --text-muted: #8b95a3;
+      --heading: #f0f3f7;
+      --border: #2c333d;
+      --danger: #ff7b66;
+      --success: #2dd4bf;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--body-bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 28px 16px;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .topbar h1 { font-size: 20px; font-weight: 600; color: var(--heading); }
+    .topbar .actions { display: flex; gap: 10px; }
+    .btn-ghost {
+      background: var(--card-bg); border: 1px solid var(--border);
+      color: var(--text); font-family: inherit; font-size: 13px;
+      padding: 8px 14px; border-radius: 8px; cursor: pointer; text-decoration: none;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-bottom: 20px;
+    }
+    .card h2 { font-size: 15px; font-weight: 600; color: var(--heading); margin-bottom: 14px; display:flex; align-items:center; gap:8px; }
+    .badge {
+      font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 999px;
+      background: rgba(240,101,72,.12); color: var(--danger);
+    }
+    .badge.zero { background: rgba(134,142,150,.12); color: var(--text-muted); }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th {
+      text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .4px;
+      color: var(--text-muted); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--border);
+    }
+    td { padding: 10px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .uname { font-weight: 500; color: var(--heading); }
+    .muted { color: var(--text-muted); font-size: 12.5px; }
+    .btn {
+      font-family: inherit; font-size: 12.5px; font-weight: 500;
+      padding: 6px 13px; border-radius: 7px; cursor: pointer;
+      border: none; transition: filter .15s ease;
+    }
+    .btn:hover { filter: brightness(1.08); }
+    .btn-ok { background: var(--success); color: #fff; }
+    .btn-no { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+    .btn-no:hover { color: var(--danger); border-color: var(--danger); filter:none; }
+    .empty { color: var(--text-muted); font-size: 13px; padding: 14px 4px; }
+    .msg { display: none; border-radius: 8px; padding: 10px 13px; font-size: 13px; margin-bottom: 18px; }
+    .msg.show { display: block; }
+    .msg-error { background: rgba(240,101,72,.1); color: var(--danger); border: 1px solid rgba(240,101,72,.3); }
+    .msg-ok { background: rgba(10,179,156,.1); color: var(--success); border: 1px solid rgba(10,179,156,.3); }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1>Admin · Akun Portal</h1>
+    <div class="actions">
+      <button class="btn-ghost" id="refresh">Muat ulang</button>
+      <a class="btn-ghost" href="/">← Portal</a>
+    </div>
+  </div>
+
+  <div class="msg msg-error" id="errBox"></div>
+  <div class="msg msg-ok" id="okBox"></div>
+
+  <div class="card">
+    <h2>Pengajuan Menunggu <span class="badge" id="pendBadge">0</span></h2>
+    <table id="pendTable">
+      <thead><tr><th>Nama</th><th>Username</th><th>Diajukan</th><th style="width:170px">Aksi</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="empty" id="pendEmpty">Tidak ada pengajuan.</div>
+  </div>
+
+  <div class="card">
+    <h2>Akun Aktif <span class="badge zero" id="userBadge">0</span></h2>
+    <table id="userTable">
+      <thead><tr><th>Username</th><th>Nama</th><th>Aktif sejak</th><th style="width:110px">Aksi</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="empty" id="userEmpty"></div>
+  </div>
+</div>
+
+<script>
+var okTimer;
+function showMsg(el, text) {
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(okTimer);
+  okTimer = setTimeout(function(){ el.classList.remove('show'); }, 4000);
+}
+function fmt(iso) {
+  if (!iso) return '—';
+  try { return new Date(iso).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }); }
+  catch (e) { return iso; }
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+async function act(body, okText) {
+  try {
+    const r = await fetch('/api/admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(body),
+    });
+    const d = await r.json().catch(function(){ return {}; });
+    if (r.status === 403) { showMsg(errBox, 'Khusus admin.'); return false; }
+    if (r.status === 401) { location.href = '/login.html'; return false; }
+    if (!r.ok || !d.ok) { showMsg(errBox, 'Gagal: ' + (d.error || r.status)); return false; }
+    showMsg(okBox, okText);
+    load();
+    return true;
+  } catch (e) {
+    showMsg(errBox, 'Kesalahan jaringan.');
+    return false;
+  }
+}
+
+function render(d) {
+  // Pengajuan
+  var pt = document.querySelector('#pendTable tbody');
+  pt.innerHTML = '';
+  (d.pending || []).forEach(function (r) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + esc(r.nama) + '</td>' +
+      '<td class="uname">' + esc(r.u) + '</td>' +
+      '<td class="muted">' + fmt(r.at) + '</td>' +
+      '<td><button class="btn btn-ok" data-act="approve" data-id="' + esc(r.id) + '">Setujui</button> ' +
+      '<button class="btn btn-no" data-act="reject" data-id="' + esc(r.id) + '">Tolak</button></td>';
+    pt.appendChild(tr);
+  });
+  document.getElementById('pendEmpty').style.display = (d.pending || []).length ? 'none' : 'block';
+  var pb = document.getElementById('pendBadge');
+  pb.textContent = (d.pending || []).length;
+  pb.classList.toggle('zero', !(d.pending || []).length);
+
+  // Akun aktif
+  var ut = document.querySelector('#userTable tbody');
+  ut.innerHTML = '';
+  (d.users || []).forEach(function (u) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="uname">' + esc(u.u) + '</td>' +
+      '<td>' + esc(u.nama || '—') + '</td>' +
+      '<td class="muted">' + fmt(u.at) + '</td>' +
+      '<td><button class="btn btn-no" data-act="revoke" data-username="' + esc(u.u) + '">Cabut</button></td>';
+    ut.appendChild(tr);
+  });
+  var ub = document.getElementById('userBadge');
+  ub.textContent = (d.users || []).length;
+  ub.classList.toggle('zero', !(d.users || []).length);
+  document.getElementById('userEmpty').textContent = (d.users || []).length
+    ? '' : 'Belum ada akun tim yang disetujui.';
+}
+
+async function load() {
+  try {
+    const r = await fetch('/api/admin', { credentials: 'same-origin' });
+    if (r.status === 401) { location.href = '/login.html'; return; }
+    if (r.status === 403) { showMsg(errBox, 'Halaman ini khusus admin.'); return; }
+    const d = await r.json();
+    render(d);
+  } catch (e) {
+    showMsg(errBox, 'Gagal memuat data.');
+  }
+}
+
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest('button[data-act]');
+  if (!b) return;
+  var act_ = b.getAttribute('data-act');
+  if (act_ === 'approve') {
+    // konfirmasi dua langkah untuk aksi berpengaruh
+    if (!confirm('Setujui akun ini dan aktifkan aksesnya?')) return;
+    act({ action: 'approve', id: b.getAttribute('data-id') }, 'Akun disetujui & aktif.');
+  } else if (act_ === 'reject') {
+    if (!confirm('Tolak pengajuan ini?')) return;
+    act({ action: 'reject', id: b.getAttribute('data-id') }, 'Pengajuan ditolak.');
+  } else if (act_ === 'revoke') {
+    if (!confirm('Cabut akses akun "' + b.getAttribute('data-username') + '"?\nSesinya langsung mati.')) return;
+    act({ action: 'revoke', username: b.getAttribute('data-username') }, 'Akses dicabut.');
+  }
+});
+
+document.getElementById('refresh').addEventListener('click', load);
+load();
+</script>
+</body>
+</html>
